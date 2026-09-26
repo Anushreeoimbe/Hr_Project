@@ -11,6 +11,7 @@ import MobileNav from "./components/MobileNav";
 
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Employees from "./pages/Employees";
 import Departments from "./pages/Departments";
 import Attendance from "./pages/Attendance";
@@ -79,15 +80,25 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
+        {/* Login */}
         <Route
           path="/login"
           element={<Login />}
         />
 
+        {/* Create Account */}
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        {/* Protected Application */}
         <Route
           path="/*"
           element={<ProtectedLayout />}
         />
+
       </Routes>
     </BrowserRouter>
   );

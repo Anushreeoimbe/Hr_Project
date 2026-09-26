@@ -8,7 +8,7 @@ import {
   Sparkles,
   ShieldCheck,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
@@ -48,10 +48,25 @@ function Login() {
     setLoading(true);
 
     setTimeout(() => {
-      if (
-        email.toLowerCase() === "admin@peoplepulse.com" &&
-        password === "Admin@123"
-      ) {
+      const enteredEmail = email.trim().toLowerCase();
+
+      // Demo account
+      const isDemoAccount =
+        enteredEmail === "admin@peoplepulse.com" &&
+        password === "Admin@123";
+
+      // Registered accounts
+      const registeredUsers = JSON.parse(
+        localStorage.getItem("peoplepulse_users") || "[]"
+      );
+
+      const registeredUser = registeredUsers.find(
+        (user) =>
+          user.email.toLowerCase() === enteredEmail &&
+          user.password === password
+      );
+
+      if (isDemoAccount) {
         localStorage.setItem("peoplepulse_logged_in", "true");
 
         localStorage.setItem(
@@ -60,6 +75,25 @@ function Login() {
             name: "Anushree",
             email: "admin@peoplepulse.com",
             role: "HR Admin",
+          })
+        );
+
+        if (rememberMe) {
+          localStorage.setItem("peoplepulse_remember", "true");
+        } else {
+          localStorage.removeItem("peoplepulse_remember");
+        }
+
+        navigate("/");
+      } else if (registeredUser) {
+        localStorage.setItem("peoplepulse_logged_in", "true");
+
+        localStorage.setItem(
+          "peoplepulse_user",
+          JSON.stringify({
+            name: registeredUser.name,
+            email: registeredUser.email,
+            role: registeredUser.role,
           })
         );
 
@@ -177,18 +211,16 @@ function Login() {
                 type="button"
                 className="forgot-password"
                 onClick={() =>
-                  setError("Please contact your HR administrator to reset your password.")
+                  setError(
+                    "Please contact your HR administrator to reset your password."
+                  )
                 }
               >
                 Forgot password?
               </button>
             </div>
 
-            {error && (
-              <div className="login-error">
-                {error}
-              </div>
-            )}
+            {error && <div className="login-error">{error}</div>}
 
             <button
               type="submit"
@@ -208,6 +240,12 @@ function Login() {
               )}
             </button>
           </form>
+
+          {/* Create Account */}
+          <div className="login-register-link">
+            <span>Don't have an account?</span>
+            <Link to="/register">Create Account</Link>
+          </div>
 
           <div className="demo-login">
             <strong>Demo Account</strong>
